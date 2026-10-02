@@ -7,6 +7,7 @@ public class AccountMapper {
 
     public static AccountResponse mapToResponse(Account account) {
         AccountResponse response = AccountResponse.builder()
+                .id(account.getId())
                 .accountHolderName(account.getAccountHolderName())
                 .accountNumber(account.getAccountNumber())
                 .accountType(account.getAccountType())

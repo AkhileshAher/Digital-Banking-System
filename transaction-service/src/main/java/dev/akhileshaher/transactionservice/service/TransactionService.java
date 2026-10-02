@@ -183,6 +183,7 @@ public class TransactionService {
         transaction.setStatus(TransactionStatus.COMPLETED);
         transaction.setCompletedAt(LocalDateTime.now());
         transactionRepository.save(transaction);
+        System.out.println("COMPLETEED");
 
         TransactionCompletedEvent completedEvent = new TransactionCompletedEvent(
                 transaction.getId(),

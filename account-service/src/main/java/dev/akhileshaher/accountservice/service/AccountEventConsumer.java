@@ -18,7 +18,7 @@ public class AccountEventConsumer {
 
     /**
      * Consume transaction.completed event from kafka
-     * Credits reciever account
+     * Credits receiver account
      * @param payload
      */
     @KafkaListener(topics = "transaction.completed")
@@ -27,12 +27,12 @@ public class AccountEventConsumer {
             ) {
         try {
 
-            String recieverAccount = (String) payload.get("recieverAccountNumber");
+            String receiverAccount = (String) payload.get("receiverAccountNumber");
             BigDecimal amount = new BigDecimal(payload.get("amount").toString());
 
-            log.info("Crediting Amount: {} amount: {}",recieverAccount,amount);
+            log.info("Crediting Amount: {} amount: {}",receiverAccount,amount);
 
-            accountService.creditBalance(recieverAccount, amount);
+            accountService.creditBalance(receiverAccount, amount);
 
 
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class AccountEventConsumer {
             accountService.blockAccount(accountNumber);
 
         } catch (Exception e) {
-            log.error("Error bloacking account: {}", e.getMessage());
+            log.error("Error blocking account: {}", e.getMessage());
         }
     }
 

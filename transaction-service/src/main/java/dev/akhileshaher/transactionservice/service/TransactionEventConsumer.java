@@ -6,6 +6,7 @@ import dev.akhileshaher.transactionservice.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 
@@ -18,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class TransactionEventConsumer {
 
     private final TransactionRepository transactionRepository;
+    private final TransactionService transactionService;
 
     private final RedisTemplate<String,String> redisTemplate;
     private final KafkaTemplate<String,Object> kafkaTemplate;
@@ -29,6 +31,7 @@ public class TransactionEventConsumer {
      * Consume verification.required
      * @param payload
      */
+    @KafkaListener(topics = "verification.required")
     public void consumerVerificationRequired(
             @Payload Map<String, Object> payload
     ) {
@@ -73,8 +76,24 @@ public class TransactionEventConsumer {
                 kafkaTemplate.send(TRANSACTION_OTP_GENERATED_TOPIC,transactionId,otpEvent);
 
             } catch (Exception e) {
-                log.error("Error Handlinf verification required: {}",e.getMessage());
+                log.error("Error Handling verification required: {}",e.getMessage());
             }
+    }
+
+    @KafkaListener(topics = "fraud.check.clean")
+    public void consumeFraudCheckClean(
+            @Payload Map<String, Object> payload
+    ) {
+
+        try {
+
+            String transactionId = (String) payload.get("transactionId");
+            transactionService.processCleanTransaction(transactionId);
+
+        } catch (Exception e) {
+            log.error("Error processing fraud check result: {}", e.getMessage());
+        }
+
     }
 
 }

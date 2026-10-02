@@ -46,6 +46,7 @@ public class AccountEventConsumer {
      * Blocks the flagged account
      * @param payload
      */
+    @KafkaListener(topics = "fraud.detected")
     public void consumeFraudDetected(@Payload Map<String, Object> payload) {
         try {
             String accountNumber = (String) payload.get("accountNumber");
